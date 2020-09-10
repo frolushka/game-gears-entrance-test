@@ -134,6 +134,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1000010754808384, guid: 77a89dfebc586d241992ad32394d6699,
         type: 3}
+    - target: {fileID: 114000012938007214, guid: 44aea1bdccdaf4544a845460aacc9734,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 559477931}
     - target: {fileID: 224000010324349074, guid: 44aea1bdccdaf4544a845460aacc9734,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -473,6 +478,11 @@ PrefabInstance:
       propertyPath: camera
       value: 
       objectReference: {fileID: 534669904}
+    - target: {fileID: 7857495324620173909, guid: 62c4624c182bca94e96863e926c37a5b,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1929511721}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62c4624c182bca94e96863e926c37a5b, type: 3}
 --- !u!224 &247571511 stripped
@@ -2310,6 +2320,11 @@ PrefabInstance:
       propertyPath: camera
       value: 
       objectReference: {fileID: 534669904}
+    - target: {fileID: 7857495324620173909, guid: 62c4624c182bca94e96863e926c37a5b,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 559477931}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62c4624c182bca94e96863e926c37a5b, type: 3}
 --- !u!224 &1754340884 stripped
@@ -2340,6 +2355,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1000010754808384, guid: 77a89dfebc586d241992ad32394d6699,
         type: 3}
+    - target: {fileID: 114000012938007214, guid: 44aea1bdccdaf4544a845460aacc9734,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1929511721}
     - target: {fileID: 224000010324349074, guid: 44aea1bdccdaf4544a845460aacc9734,
         type: 3}
       propertyPath: m_SizeDelta.x

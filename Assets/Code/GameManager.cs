@@ -15,6 +15,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<Player> players;
     [SerializeField] private List<PlayerUI> playersUI;
 
+    private void Awake()
+    {
+        players.ForEach(player =>
+        {
+            player.onDeath += GameOver;
+            player.onPlayerAttack += Attack;
+        });
+    }
+
     private void Start()
     {
         Restart(true);
@@ -60,7 +69,7 @@ public class GameManager : MonoBehaviour
         });
     }
 
-    public void Attack(Player attacker)
+    private void Attack(Player attacker)
     {
         var defender = Combat.GetDefender(players, attacker);
         if (defender == null)
@@ -74,7 +83,7 @@ public class GameManager : MonoBehaviour
         attacker.UpdateHealth();
     }
 
-    public void GameOver()
+    private void GameOver()
     {
         playersUI.ForEach(x => x.attackButton.interactable = false);
     }

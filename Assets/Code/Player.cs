@@ -23,18 +23,17 @@ public class Player : MonoBehaviour
     
     private Animator _animator;
 
-    public PlayerEvent onPlayerCreated;
-    public UpdatePlayerEvent onStatsUpdated;
-    public UpdateHealthEvent onHealthUpdated;
-    public UnityEvent onDeath;
-    public PlayerEvent onPlayerAttack;
+    public event Action<List<Stat>, List<Buff>> onStatsUpdated;
+    public event Action<float> onHealthUpdated;
+    public event Action onDeath;
+    
+    public event Action<Player> onPlayerAttack;
     
     public Stat HealthStat { get; private set; }
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        onPlayerCreated?.Invoke(this);
     }
 
     public void UpdateStats(List<Stat> stats, List<Buff> buffs)

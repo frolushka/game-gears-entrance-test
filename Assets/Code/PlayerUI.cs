@@ -7,23 +7,25 @@ using UnityEngine.UI;
 public class PlayerUI : MonoBehaviour
 {
     private const string IconsFolder = "Icons";
+
+    [SerializeField] private Player player;
     
     public Button attackButton;
     public Transform statsPanel;
 
     [SerializeField] private GameObject statPrefab;
-
-    private Player _player;
     
     private StatUI _healthStatUI;
 
-    public void RegisterPlayer(Player player)
+    private void Awake()
     {
-        _player = player;
-        attackButton.onClick.AddListener(_player.Attack);
+        player.onStatsUpdated += UpdateStats;
+        player.onHealthUpdated += UpdateHealth;
+        
+        attackButton.onClick.AddListener(player.Attack);
     }
     
-    public void UpdateStats(List<Stat> stats, List<Buff> buffs)
+    private void UpdateStats(List<Stat> stats, List<Buff> buffs)
     {
         _healthStatUI = null;
         foreach (Transform statUI in statsPanel)
@@ -40,7 +42,7 @@ public class PlayerUI : MonoBehaviour
         buffs?.ForEach(buff => AddStatUI(buff.icon, buff.title));
     }
 
-    public void UpdateHealth(float value)
+    private void UpdateHealth(float value)
     {
         _healthStatUI.title.text = value.ToString("f0");
     }

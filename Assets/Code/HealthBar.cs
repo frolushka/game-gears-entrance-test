@@ -6,31 +6,33 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
+    [SerializeField] private Player player;
+    [Space]
     [SerializeField] private GameObject floatingText;
     [SerializeField] private Camera camera;
     [SerializeField] private Image image;
-
     [Space] 
     [SerializeField] private float height = 3.5f;
     
-    private Player _player;
-    
     private float _maxHealth;
     private float _currentHealth;
+
+    private void Awake()
+    {
+        player.onStatsUpdated += UpdateStats;
+        player.onHealthUpdated += UpdateHealth;
+        
+        player.onDeath += () => gameObject.SetActive(false);
+    }
 
     private void FixedUpdate()
     {
         UpdatePosition();
     }
 
-    public void RegisterPlayer(Player player)
+    private void UpdateStats(List<Stat> stats, List<Buff> buffs)
     {
-        _player = player;
-    }
-
-    public void UpdateStats(List<Stat> stats, List<Buff> buffs)
-    {
-        _maxHealth = _player.HealthStat.value;
+        _maxHealth = player.HealthStat.value;
         _currentHealth = _maxHealth;
         image.fillAmount = 1;
         
@@ -38,7 +40,7 @@ public class HealthBar : MonoBehaviour
         gameObject.SetActive(true);
     }
     
-    public void UpdateHealth(float value)
+    private void UpdateHealth(float value)
     {
         var delta = value - _currentHealth;
         if (!Mathf.Approximately(delta, 0))
@@ -50,10 +52,10 @@ public class HealthBar : MonoBehaviour
 
     private void UpdatePosition()
     {
-        if (!_player)
+        if (!player)
             return;
         
-        var screenPosition = camera.WorldToScreenPoint(_player.transform.position + Vector3.up * height);
+        var screenPosition = camera.WorldToScreenPoint(player.transform.position + Vector3.up * height);
         transform.position = screenPosition;
     }
 
