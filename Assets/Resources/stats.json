@@ -1,0 +1,26 @@
+[
+  {
+    "id": 0,
+    "title": "жизнь",
+    "value": 100,
+    "icon": "hp"
+  },
+  {
+    "id": 1,
+    "title": "броня",
+    "value": 25,
+    "icon": "armor"
+  },
+  {
+    "id": 2,
+    "title": "урон",
+    "value": 25,
+    "icon": "axe"
+  },
+  {
+    "id": 3,
+    "title": "вампиризм",
+    "value": 0,
+    "icon": "Meat"
+  }
+]

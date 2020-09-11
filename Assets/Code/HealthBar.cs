@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,14 +16,23 @@ public class HealthBar : MonoBehaviour
     [SerializeField] private float height = 3.5f;
     
     private float _maxHealth;
-    private float _currentHealth;
 
-    private void Awake()
+    #region Unity events
+
+    private void OnEnable()
     {
         player.onStatsUpdated += UpdateStats;
-        player.onHealthUpdated += UpdateHealth;
+        player.onHealthUpdated += UpdateHealthBarFillAmount;
         
-        player.onDeath += () => gameObject.SetActive(false);
+        player.onDeath += Hide;
+    }
+
+    private void OnDisable()
+    {
+        player.onStatsUpdated -= UpdateStats;
+        player.onHealthUpdated -= UpdateHealthBarFillAmount;
+        
+        player.onDeath -= Hide;
     }
 
     private void FixedUpdate()
@@ -30,26 +40,20 @@ public class HealthBar : MonoBehaviour
         UpdatePosition();
     }
 
-    private void UpdateStats(List<Stat> stats, List<Buff> buffs)
+    #endregion
+
+    #region Private
+
+    private void Hide() => gameObject.SetActive(false);
+
+    private void UpdateStats(Stat[] stats, Buff[] buffs)
     {
-        _maxHealth = player.HealthStat.value;
-        _currentHealth = _maxHealth;
+        _maxHealth = stats.Single(x => x.id == StatsId.LIFE_ID).value;
         image.fillAmount = 1;
         
         UpdatePosition();
-        gameObject.SetActive(true);
     }
     
-    private void UpdateHealth(float value)
-    {
-        var delta = value - _currentHealth;
-        if (!Mathf.Approximately(delta, 0))
-            InstantiateDeltaText(delta);
-            
-        _currentHealth = value;
-        image.fillAmount = _currentHealth / _maxHealth;
-    }
-
     private void UpdatePosition()
     {
         if (!player)
@@ -58,11 +62,21 @@ public class HealthBar : MonoBehaviour
         var screenPosition = camera.WorldToScreenPoint(player.transform.position + Vector3.up * height);
         transform.position = screenPosition;
     }
+    
+    private void UpdateHealthBarFillAmount(float prevValue, float curValue)
+    {
+        var delta = curValue - prevValue;
+        if (!Mathf.Approximately(delta, 0))
+            InstantiateDeltaText(delta);
+            
+        image.fillAmount = curValue / _maxHealth;
+    }
 
     private void InstantiateDeltaText(float value)
     {
         var deltaText = Instantiate(floatingText, transform.parent);
         deltaText.transform.position = transform.position;
+        
         var barDeltaText = deltaText.GetComponent<HealthBarDeltaText>();
         if (value > 0)
         {
@@ -77,4 +91,6 @@ public class HealthBar : MonoBehaviour
         
         barDeltaText.StartMove();
     }
+
+    #endregion
 }

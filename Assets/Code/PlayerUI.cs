@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -10,41 +11,72 @@ public class PlayerUI : MonoBehaviour
 
     [SerializeField] private Player player;
     
-    public Button attackButton;
-    public Transform statsPanel;
-
     [SerializeField] private GameObject statPrefab;
     
+    [SerializeField] private Button attackButton;
+    [SerializeField] private Transform statsPanel;
+
     private StatUI _healthStatUI;
+
+    #region Unity events
 
     private void Awake()
     {
-        player.onStatsUpdated += UpdateStats;
-        player.onHealthUpdated += UpdateHealth;
-        
-        attackButton.onClick.AddListener(player.Attack);
+        attackButton.onClick.AddListener(player.RequestAttack);
     }
-    
-    private void UpdateStats(List<Stat> stats, List<Buff> buffs)
+
+    private void OnEnable()
+    {
+        player.onStatsUpdated += UpdateStats;
+        player.onHealthUpdated += UpdateHealthStatUI;
+        
+        attackButton.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        player.onStatsUpdated -= UpdateStats;
+        player.onHealthUpdated -= UpdateHealthStatUI;
+        
+        attackButton.enabled = false;
+    }
+
+    #endregion
+
+    #region Private
+
+    private void UpdateStats(Stat[] stats, Buff[] buffs)
     {
         _healthStatUI = null;
         foreach (Transform statUI in statsPanel)
             Destroy(statUI.gameObject);
-        
-        stats.ForEach(stat =>
+
+        if (stats != null)
         {
-            var statUI = AddStatUI(stat.icon, stat.value.ToString());
-            if (stat.id == StatsId.LIFE_ID)
+            for (var i = 0; i < stats.Length; i++)
             {
-                _healthStatUI = statUI;
+                var stat = stats[i];
+                var statUI = AddStatUI(stat.icon, stat.value.ToString());
+                if (stat.id == StatsId.LIFE_ID)
+                {
+                    _healthStatUI = statUI;
+                }
             }
-        });
-        buffs?.ForEach(buff => AddStatUI(buff.icon, buff.title));
+        }
+
+        if (buffs != null)
+        {
+            for (var i = 0; i < buffs.Length; i++)
+            {
+                var buff = buffs[i];
+                AddStatUI(buff.icon, buff.title);
+            }
+        }
     }
 
-    private void UpdateHealth(float value)
+    private void UpdateHealthStatUI(float prevValue, float currentValue)
     {
-        _healthStatUI.title.text = value.ToString("f0");
+        _healthStatUI.title.text = currentValue.ToString("f0");
     }
 
     private StatUI AddStatUI(string iconName, string text)
@@ -57,4 +89,6 @@ public class PlayerUI : MonoBehaviour
         statUI.title.text = text;
         return statUI;
     }
+
+    #endregion
 }

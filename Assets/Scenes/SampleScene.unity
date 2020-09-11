@@ -1533,8 +1533,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3701a6c86247b405194e4aa748f873a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statsWrapper: {fileID: 11400000, guid: d10fa9565b01944929f4f4d55aaa9879, type: 2}
-  buffsWrapper: {fileID: 11400000, guid: 19350859e64ed4340a9897cf7a4eef55, type: 2}
   settings:
     playersCount: 2
     buffCountMin: 0
@@ -1546,6 +1544,9 @@ MonoBehaviour:
   playersUI:
   - {fileID: 127369760}
   - {fileID: 1875617855}
+  healthBars:
+  - {fileID: 859109004}
+  - {fileID: 908489351}
 --- !u!4 &978112687
 Transform:
   m_ObjectHideFlags: 0

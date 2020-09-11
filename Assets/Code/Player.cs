@@ -5,45 +5,49 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-[Serializable]
-public class UpdatePlayerEvent : UnityEvent<List<Stat>, List<Buff>> { }
-[Serializable]
-public class PlayerEvent : UnityEvent<Player> { }
-[Serializable]
-public class UpdateHealthEvent : UnityEvent<float> { }
-
 [RequireComponent(typeof(Animator))]
 public class Player : MonoBehaviour
 {
+    public delegate void StatsUpdateDelegate(Stat[] stats, Buff[] buffs);
+    public delegate void HealthUpdateDelegate(float prevHealth, float curHealth);
+
+    public delegate void DeathDelegate();
+
+    public delegate void PlayerDelegate(Player player);
+        
     private const string HealthName = "Health";
     private const string AttackTrigger = "Attack";
-
-    [HideInInspector] public List<Stat> stats;
-    [HideInInspector] public List<Buff> buffs;
+    
+    public event StatsUpdateDelegate onStatsUpdated;
+    public event HealthUpdateDelegate onHealthUpdated;
+    
+    public event DeathDelegate onDeath;
+    
+    public event PlayerDelegate onPlayerAttack;
+    
+    private Stat[] _stats;
+    private Buff[] _buffs;
     
     private Animator _animator;
 
-    public event Action<List<Stat>, List<Buff>> onStatsUpdated;
-    public event Action<float> onHealthUpdated;
-    public event Action onDeath;
-    
-    public event Action<Player> onPlayerAttack;
-    
-    public Stat HealthStat { get; private set; }
+    private float _prevHealth;
+    private Stat _healthStat;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
     }
 
-    public void UpdateStats(List<Stat> stats, List<Buff> buffs)
+    public void UpdateStats(Stat[] stats, Buff[] buffs)
     {
-        // костыль
-        _animator.Play("Entry");
+        // To reset animator to default state
+        _animator.Play(null);
         
-        this.stats = stats;
-        this.buffs = buffs;
-        HealthStat = stats.FirstOrDefault(x => x.id == StatsId.LIFE_ID);
+        _stats = stats;
+        _buffs = buffs;
+        
+        _healthStat = stats.SingleOrDefault(x => x.id == StatsId.LIFE_ID);
+        _prevHealth = _healthStat.value;
 
         onStatsUpdated?.Invoke(stats, buffs);
         
@@ -52,18 +56,27 @@ public class Player : MonoBehaviour
 
     public void UpdateHealth()
     {
-        _animator.SetInteger(HealthName, (int)HealthStat.value);
+        _animator.SetInteger(HealthName, (int)_healthStat.value);
         
-        onHealthUpdated?.Invoke(HealthStat.value);
+        onHealthUpdated?.Invoke(_prevHealth, _healthStat.value);
+        _prevHealth = _healthStat.value;
 
-        if (HealthStat.value <= 0)
+        if (_healthStat.value <= 0)
             onDeath?.Invoke();
     }
 
-    public void Attack()
+    public void RequestAttack()
     {
         _animator.SetTrigger(AttackTrigger);
 
         onPlayerAttack?.Invoke(this);
+    }
+    
+    public void DefendFrom(Player attacker)
+    {
+        GameManager.BattleCalculator.Battle(attacker._stats, _stats);
+        
+        UpdateHealth();
+        attacker.UpdateHealth();
     }
 }

@@ -1,0 +1,62 @@
+[
+  {
+    "id": 0,
+    "title": "Вампир",
+    "icon": "book",
+    "stats": [
+      {
+        "statId": 0,
+        "value": 100
+      },
+      {
+        "statId": 3,
+        "value": 25
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "title": "Щит",
+    "icon": "shield",
+    "stats": [
+      {
+        "statId": 1,
+        "value": 25
+      },
+      {
+        "statId": 2,
+        "value": -5
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Супер сила",
+    "icon": "apple",
+    "stats": [
+      {
+        "statId": 2,
+        "value": 35
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Титан",
+    "icon": "hp",
+    "stats": [
+      {
+        "statId": 0,
+        "value": 200
+      },
+      {
+        "statId": 1,
+        "value": 25
+      },
+      {
+        "statId": 2,
+        "value": 50
+      }
+    ]
+  }
+]
