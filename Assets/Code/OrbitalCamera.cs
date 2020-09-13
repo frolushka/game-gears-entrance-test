@@ -15,6 +15,7 @@ public class OrbitalCamera : MonoBehaviour
     private Transform _transform;
 
     private float _targetFov;
+    private float _deltaFov;
     private float _nextFovChange;
     
     private void Awake()
@@ -51,11 +52,12 @@ public class OrbitalCamera : MonoBehaviour
 
     private void UpdateCamera(float time)
     {
-        _camera.fieldOfView = Mathf.MoveTowards(_camera.fieldOfView, _targetFov, 1f / settings.fovDuration);
+        _camera.fieldOfView = Mathf.MoveTowards(_camera.fieldOfView, _targetFov, Time.fixedDeltaTime * _deltaFov / settings.fovDuration);
         
         if (time >= _nextFovChange)
         {
             _targetFov = Random.Range(settings.fovMin, settings.fovMax);
+            _deltaFov = Mathf.Abs(_targetFov - _camera.fieldOfView);
             _nextFovChange = time + settings.fovDelay;
         }
     }

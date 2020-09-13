@@ -7,13 +7,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Text))]
 public class HealthBarDeltaText : MonoBehaviour
 {
+    private static readonly Func<float, float> Pattern = x => -((x - 1) * (x - 1)) + 1;
+    
     [HideInInspector] public Text text;
     
     [SerializeField] private float distance;
     [SerializeField] private float destroyTime;
-
-    private Vector3 _targetPosition;
-
+    
     private void Awake()
     {
         text = GetComponent<Text>();
@@ -26,14 +26,18 @@ public class HealthBarDeltaText : MonoBehaviour
     
     public void StartMove()
     {
-        _targetPosition = transform.position + Vector3.up * distance;
         StartCoroutine(Move());
         
         IEnumerator Move()
         {
-            while (true)
+            var defaultYPosition = transform.position.y;
+            for (float time = 0; time < destroyTime; time += Time.deltaTime)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, 1f / destroyTime);
+                transform.position = new Vector3(
+                    transform.position.x, 
+                    defaultYPosition + distance * Pattern(time / destroyTime), 
+                    transform.position.z
+                );
                 yield return null;
             }
         }
